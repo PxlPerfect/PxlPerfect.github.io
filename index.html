@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Perfect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./ads-config.js"></script>
+    <script defer src="./ads.js"></script>
+  </head>
+  <body class="home-page">
+    <main class="app-shell home-shell">
+      <div class="top-bar">
+        <nav class="top-nav" aria-label="Main navigation">
+          <a class="nav-link is-active" href="./index.html">Home</a>
+          <a class="nav-link" href="./image.html">Image Pixels</a>
+          <a class="nav-link" href="./model.html">3D Models</a>
+        </nav>
+        <div class="top-bar-actions">
+          <button id="darkModeToggle" class="theme-toggle-button" type="button" aria-pressed="false" aria-label="Enable dark mode">
+            <span aria-hidden="true">☾</span>
+          </button>
+          <a class="site-logo" href="./index.html" aria-label="Go to home">Pixel Perfect</a>
+        </div>
+      </div>
+
+      <section class="home-hero-clean">
+        <div class="home-kicker">Professional inspection workspace</div>
+        <h1>
+          Inspect
+          <span
+            id="homeAnimatedPhrase"
+            class="home-animated-phrase"
+            data-phrases="images precisely,3D models cleanly,color values instantly,voxel layers quickly"
+            aria-label="animated feature phrase"
+          ></span>
+        </h1>
+        <p class="home-lead">
+          Pixel Perfect gives you exact pixel readouts, origin-based offsets, and voxel-style model inspection in one focused toolset.
+        </p>
+        <div class="home-hero-actions">
+          <a class="home-cta primary" href="./image.html">Open Image Inspector</a>
+          <a class="home-cta" href="./model.html">Open 3D Viewer</a>
+        </div>
+      </section>
+
+      <aside class="ad-shell ad-shell-banner" data-ad-shell data-ad-slot-key="homeBanner" aria-label="Advertisement" hidden>
+        <span class="ad-label">Advertisement</span>
+      </aside>
+
+      <footer class="site-footer">
+        <span>Pixel Perfect</span>
+        <nav aria-label="Legal links">
+          <a href="./privacy.html">Privacy &amp; Cookies</a>
+          <button type="button" data-open-privacy-choices hidden>Privacy choices</button>
+        </nav>
+      </footer>
+
+    </main>
+
+    <script src="./theme-toggle.js"></script>
+    <script src="./home.js"></script>
+  </body>
+</html>

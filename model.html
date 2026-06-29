@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Perfect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./ads-config.js"></script>
+    <script defer src="./ads.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <div class="top-bar">
+        <nav class="top-nav" aria-label="Main navigation">
+          <a class="nav-link" href="./index.html">Home</a>
+          <a class="nav-link" href="./image.html">Image Pixels</a>
+          <a class="nav-link is-active" href="./model.html">3D Models</a>
+        </nav>
+        <div class="top-bar-actions">
+          <button id="darkModeToggle" class="theme-toggle-button" type="button" aria-pressed="false" aria-label="Enable dark mode">
+            <span aria-hidden="true">☾</span>
+          </button>
+          <a class="site-logo" href="./index.html" aria-label="Go to home">Pixel Perfect</a>
+        </div>
+      </div>
+
+      <section class="hero hero-layout">
+        <div class="hero-main">
+          <p class="eyebrow">Model viewer</p>
+          <h1>Upload a 3D model and inspect it in 3D.</h1>
+          <p class="hero-copy">
+            Rotate the model by dragging, adjust the view, and inspect a blocky voxel preview right in the browser.
+          </p>
+        </div>
+
+        <aside class="panel hero-tips">
+          <h2>Tips</h2>
+          <div class="preview-readout model-help">
+            <p>Use zoom to fit small or large models.</p>
+            <p>Click a visible block to inspect its coordinates.</p>
+            <p>Raise quality for smaller blocks and more detail.</p>
+            <p>Supported: `.obj`, `.stl`, `.off`, `.ply`.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel controls">
+        <div class="control-block">
+          <span class="input-label">Choose a 3D model</span>
+          <div class="upload-row">
+            <button id="pickModelButton" class="upload-button" type="button">Pick model file</button>
+            <span id="modelUploadName" class="upload-name">No model selected</span>
+          </div>
+          <input
+            id="modelUpload"
+            class="sr-only-file"
+            type="file"
+            accept=".obj,.stl,.off,.ply,text/plain,model/obj,model/stl,application/sla,application/octet-stream"
+          />
+        </div>
+
+          <div class="status-grid">
+          <div>
+            <span class="status-label">Status</span>
+            <strong id="modelStatus">Waiting for a model</strong>
+          </div>
+          <div id="selectedBlockStatus">
+            <span class="status-label">Selected block</span>
+            <strong id="selectedBlockCoords">x: -, y: -, z: -</strong>
+          </div>
+          <div id="secondaryBlockStatus">
+            <span class="status-label">Right click block</span>
+            <strong id="secondaryBlockCoords">x: -, y: -, z: -</strong>
+          </div>
+          <div id="wireframeAngleStatus">
+            <span class="status-label">Panel angle</span>
+            <strong id="wireframeAngle">-</strong>
+          </div>
+          <div id="wireframeSecondaryAngleStatus">
+            <span class="status-label">Right click panel</span>
+            <strong id="wireframeSecondaryAngle">triangle: -</strong>
+          </div>
+        </div>
+      </section>
+
+      <aside class="ad-shell ad-shell-banner" data-ad-shell data-ad-slot-key="toolBanner" aria-label="Advertisement" hidden>
+        <span class="ad-label">Advertisement</span>
+      </aside>
+
+      <section id="modelLayout" class="viewer-layout model-layout">
+        <aside class="panel preview-panel">
+          <h2>Controls</h2>
+          <div class="sidebar-controls">
+            <section class="control-group">
+              <div class="control-group-header">
+                <h3>View</h3>
+                <p>How the model is displayed and navigated.</p>
+              </div>
+              <div class="control-group-body">
+                <div class="control-block">
+                  <label for="modelViewMode">View mode</label>
+                  <select id="modelViewMode">
+                    <option value="voxel">Voxel</option>
+                    <option value="wireframe">Wireframe</option>
+                  </select>
+                </div>
+
+                <div class="control-block">
+                  <label for="modelZoom">Zoom</label>
+                  <input id="modelZoom" type="range" min="0.4" max="10" step="0.1" value="1.4" />
+                  <span id="modelZoomValue" class="inline-value">1.4x</span>
+                </div>
+
+                <button id="resetView" class="secondary sidebar-button" type="button">Reset view</button>
+              </div>
+            </section>
+
+            <section class="control-group">
+              <div class="control-group-header">
+                <h3>Selection</h3>
+                <p>Inspect blocks and manage the layer walkthrough.</p>
+              </div>
+              <div class="control-group-body">
+                <div id="modelQualityBlock" class="control-block">
+                  <label for="modelQuality">Voxel count</label>
+                  <div class="scale-inputs">
+                    <input id="modelQuality" type="range" min="6" max="150" step="1" value="14" />
+                    <input
+                      id="modelQualityNumber"
+                      type="number"
+                      min="6"
+                      max="150"
+                      step="1"
+                      value="14"
+                      aria-label="Voxel count amount"
+                    />
+                  </div>
+                </div>
+
+                <button id="toggleSlideshow" class="secondary sidebar-button" type="button">
+                  Slideshow: On
+                </button>
+              </div>
+            </section>
+
+            <section class="control-group wireframe-only">
+              <div class="control-group-header">
+                <h3>Advanced</h3>
+                <p>Wireframe-specific tuning and comparison tools.</p>
+              </div>
+              <div class="control-group-body">
+                <div id="modelWireBlock" class="control-block wireframe-only" hidden>
+                  <label for="modelWireSize">Wire size</label>
+                  <input id="modelWireSize" type="range" min="1" max="50" step="1" value="2" />
+                  <span id="modelWireSizeValue" class="inline-value">2</span>
+                </div>
+
+                <button
+                  id="toggleWireMesh"
+                  class="secondary sidebar-button wireframe-only"
+                  type="button"
+                  hidden
+                >
+                  Mesh: On
+                </button>
+
+                <div id="modelColorBlock" class="control-block wireframe-only" hidden>
+                  <label for="modelColor">Model color</label>
+                  <div class="color-input-row">
+                    <input id="modelColor" class="color-input" type="color" value="#e9dccd" />
+                    <span id="modelColorValue" class="inline-value">#E9DCCD</span>
+                  </div>
+                </div>
+
+                <section id="panelMeasurements" class="measurement-panel wireframe-only" hidden>
+                  <h3>Panel Measurements</h3>
+                  <div class="measurement-card">
+                    <span class="status-label">Selected panel</span>
+                    <strong id="primaryPanelSummary">Click a triangle in wireframe mode.</strong>
+                    <p id="primaryPanelLengths">Lengths: -</p>
+                    <p id="primaryPanelAngles">Angles: -</p>
+                  </div>
+                  <div class="measurement-card">
+                    <span class="status-label">Right click panel</span>
+                    <strong id="secondaryPanelSummary">Right click a second triangle to compare it.</strong>
+                    <p id="secondaryPanelLengths">Lengths: -</p>
+                    <p id="secondaryPanelAngles">Angles: -</p>
+                  </div>
+                </section>
+              </div>
+            </section>
+          </div>
+
+          <input id="modelYaw" type="hidden" value="25" />
+          <input id="modelPitch" type="hidden" value="-18" />
+          <span id="modelYawValue" hidden>25deg</span>
+          <span id="modelPitchValue" hidden>-18deg</span>
+        </aside>
+
+        <div id="viewerSplitLayout" class="viewer-split-layout">
+          <div id="mainViewerPanel" class="panel viewer-panel">
+            <div class="viewer-header">
+              <div>
+                <h2>3D Viewer</h2>
+                <p>Drag inside the canvas to rotate.</p>
+              </div>
+              <button id="toggleFullscreen" class="secondary" type="button">Fullscreen</button>
+            </div>
+            <div id="modelViewerFrame" class="viewer-frame empty">
+              <canvas id="modelCanvas" class="model-canvas" aria-label="3D model viewer"></canvas>
+              <div id="modelEmptyState" class="empty-state">
+                Upload an `.obj`, `.stl`, `.off`, or `.ply` file to preview it here.
+              </div>
+            </div>
+          </div>
+
+          <section id="layerPanel" class="panel layer-panel">
+            <div class="viewer-header">
+              <h2>Layer Slideshow</h2>
+              <p>Switch through voxel layers from bottom to top.</p>
+            </div>
+            <div class="layer-controls">
+              <button id="layerPrev" class="secondary" type="button">Previous layer</button>
+              <button
+                id="layerJump"
+                class="layer-jump-button"
+                type="button"
+                aria-label="Jump to selected block layer"
+                disabled
+              ></button>
+              <button
+                id="layerSecondaryJump"
+                class="layer-jump-button layer-jump-button-secondary"
+                type="button"
+                aria-label="Jump to right click block layer"
+                disabled
+              ></button>
+              <button id="layerNext" class="secondary" type="button">Next layer</button>
+              <strong id="layerInfo" class="layer-info"></strong>
+            </div>
+            <div id="layerViewerFrame" class="layer-frame empty">
+              <canvas id="layerCanvas" class="layer-canvas" aria-label="Model layer viewer" hidden></canvas>
+              <div id="layerEmptyState" class="empty-state">
+                Upload a model to browse its voxel layers here.
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="ad-shell ad-shell-footer" data-ad-shell data-ad-slot-key="toolFooter" aria-label="Advertisement" hidden>
+        <span class="ad-label">Advertisement</span>
+      </aside>
+
+      <footer class="site-footer">
+        <span>Pixel Perfect</span>
+        <nav aria-label="Legal links">
+          <a href="./privacy.html">Privacy &amp; Cookies</a>
+          <button type="button" data-open-privacy-choices hidden>Privacy choices</button>
+        </nav>
+      </footer>
+
+    </main>
+
+    <script src="./theme-toggle.js"></script>
+    <script src="./model.js"></script>
+  </body>
+</html>
